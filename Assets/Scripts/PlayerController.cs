@@ -8,8 +8,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     Rigidbody2D rb;
     Transform tr;
-    [SerializeField]
     Animator an;
+
     public float moveSpeed, jumpForce;
     private Vector2 moveDirection;
     public Color debugColor = Color.red;
@@ -62,6 +62,12 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         an.SetBool("isJumping", true);
       } 
+    }
+
+    void OnTriggerEnter2D(Collider2D other){
+      if (other.gameObject.tag == "DeathZone"){
+        tr.position = Vector3.zero;
+      }
     }
 
 }
