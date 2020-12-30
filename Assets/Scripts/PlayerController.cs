@@ -36,6 +36,11 @@ public class PlayerController : MonoBehaviour
       }else{
         an.SetBool("isJumping", true);
       }
+
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal")*moveSpeed, rb.velocity.y);
+        if (Input.GetKeyDown(KeyCode.R)){
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        }
     }
 
     // Handles movement of player

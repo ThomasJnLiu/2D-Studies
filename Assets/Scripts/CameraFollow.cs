@@ -15,7 +15,6 @@ public class CameraFollow : MonoBehaviour
     {
         if(player){
             offset = transform.position - player.transform.position;
-            Debug.Log(offset);  
         }
 
     }
