@@ -7,7 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     Rigidbody2D rb;
-
+    Transform tr;
+    [SerializeField]
+    Animator an;
     public float moveSpeed, jumpForce;
     private Vector2 moveDirection;
     public Color debugColor = Color.red;
@@ -19,6 +21,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         collisionState = GetComponent<CollisionState>();
+        an = GetComponent<Animator>();
+        tr = GetComponent<Transform>();
     }
 
     // Update is called once per frame
@@ -26,6 +30,12 @@ public class PlayerController : MonoBehaviour
     {
       // Always call move function, pass move direction from OnMove
       Move(moveDirection);
+
+      if(collisionState.standing){
+        an.SetBool("isJumping", false);
+      }else{
+        an.SetBool("isJumping", true);
+      }
     }
 
     // Handles movement of player
@@ -37,6 +47,12 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context){
       // Updates move direction with input direction
       moveDirection = context.ReadValue<Vector2>();
+
+      // Pass move direction to animator, will play walking animation if player is moving
+      an.SetFloat("speed", Mathf.Abs(moveDirection.x));
+
+      // Flip sprite based on movement direction by setting localScale
+      tr.localScale = moveDirection.x < 0f ? new Vector3 (-1, 1, 1) : new Vector3 (1, 1, 1);
     }
 
     // Called whenever jump action is executed
@@ -44,8 +60,8 @@ public class PlayerController : MonoBehaviour
       // Check if touching ground before jumping
       if(collisionState.standing){
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-      }
-    
+        an.SetBool("isJumping", true);
+      } 
     }
 
 }
