@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
     Rigidbody2D rb;
     Transform tr;
     Animator an;
@@ -14,8 +13,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveDirection;
     public Color debugColor = Color.red;
     private CollisionState collisionState;
-
-
+    bool inTrigger = false;
 
     // Start is called before the first frame update
     void Start()
@@ -29,18 +27,15 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
       // Always call move function, pass move direction from OnMove
-      Move(moveDirection);
 
-      if(collisionState.standing){
-        an.SetBool("isJumping", false);
-      }else{
-        an.SetBool("isJumping", true);
-      }
+        Move(moveDirection);
 
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal")*moveSpeed, rb.velocity.y);
-        if (Input.GetKeyDown(KeyCode.R)){
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        if(collisionState.standing){
+          an.SetBool("isJumping", false);
+        }else{
+          an.SetBool("isJumping", true);
         }
+      
     }
 
     // Handles movement of player
@@ -66,13 +61,26 @@ public class PlayerController : MonoBehaviour
       if(collisionState.standing){
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         an.SetBool("isJumping", true);
+
       } 
     }
 
-    void OnTriggerEnter2D(Collider2D other){
+    void OnTriggerEnter2D(Collider2D other){        
+      inTrigger = true;
       if (other.gameObject.tag == "DeathZone"){
-        tr.position = Vector3.zero;
+        tr.position = Vector3.zero;    
       }
     }
+
+    public void OnTriggerExit2D(){
+      inTrigger = false;
+    }
+
+    public void OnInteract(){
+      if(inTrigger){
+        Fungus.Flowchart.BroadcastFungusMessage("Start");
+      }
+    }
+
 
 }
